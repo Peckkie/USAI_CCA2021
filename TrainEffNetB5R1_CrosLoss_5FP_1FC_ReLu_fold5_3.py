@@ -1,3 +1,5 @@
+## Train model EffNet B5 R1 Fold5 Dataset3 : 5FP Class
+
 import PIL
 from keras import models
 from keras import layers
@@ -12,6 +14,8 @@ import matplotlib.pyplot as plt
 import os
 from tensorflow.keras import callbacks
 import pandas as pd
+from keras.utils import generic_utils
+
 
 os.environ["CUDA_VISIBLE_DEVICES"]="0"
 
@@ -20,25 +24,43 @@ ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 batch_size = 16
 epochs = 200
+
 #Train
-dataframe = pd.read_csv('/home/yupaporn/codes/USAI/Traindf_fold1_3.csv')
-base_dir = '/media/tohn/SSD/Images/Image1'
+dataframe = pd.read_csv('/home/yupaporn/codes/USAI/Traindf_fold5_3.csv') #แก้ data เปลี่ยนตาม fold
+base_dir = '/media/tohn/SSD/Images/Image5' #เปลี่ยนตาม fold
 os.chdir(base_dir)
 train_dir = os.path.join(base_dir, 'train')
 
 #validation
-valframe = pd.read_csv( '/home/yupaporn/codes/USAI/Validationdf_fold1_3.csv')
+valframe = pd.read_csv( '/home/yupaporn/codes/USAI/Validationdf_fold5_3.csv') #เปลี่ยนตาม fold
 validation_dir = os.path.join(base_dir, 'validation')
 
-#load model
-import efficientnet.tfkeras
+from efficientnet.keras import EfficientNetB5 as Net
+from efficientnet.keras import center_crop_and_resize, preprocess_input
+conv_base = Net(weights='imagenet')
+height = width = conv_base.input_shape[1]
+input_shape = (height, width, 3)
 
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
-from tensorflow.keras.models import load_model
+# loading pretrained conv base model
+conv_base = Net(weights='imagenet', include_top=False, input_shape=input_shape)
 
-model_dir = '/media/tohn/SSD/ModelTrainByImages/R1_1/models/B5_R1_5FP_relu_1FC_fold1_3.h5'
-model = load_model(model_dir)
-height = width = model.input_shape[1]
+# create new model with a new classification layer
+x = conv_base.output  
+global_average_layer = layers.GlobalAveragePooling2D(name = 'head_pooling')(x)
+dropout_layer_1 = layers.Dropout(0.50,name = 'head_dropout')(global_average_layer)
+prediction_layer = layers.Dense(5, activation='softmax',name = 'prediction_layer')(dropout_layer_1)
+
+model = models.Model(inputs= conv_base.input, outputs=prediction_layer) 
+model.summary()
+
+#showing before&after freezing
+print('This is the number of trainable layers '
+      'before freezing the conv base:', len(model.trainable_weights))
+#conv_base.trainable = False  # freeze เพื่อรักษา convolutional base's weight
+for layer in conv_base.layers:
+    layer.trainable = False
+print('This is the number of trainable layers '
+      'after freezing the conv base:', len(model.trainable_weights))  #freez แล้วจะเหลือ max pool and dense
 
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
@@ -74,9 +96,9 @@ test_generator = test_datagen.flow_from_dataframe(
         color_mode= 'rgb',
         class_mode='categorical')
 
-os.chdir('/media/tohn/SSD/ModelTrainByImages/R2_1')
+os.chdir('/media/tohn/SSD/ModelTrainByImages/R1_5') #เปลี่ยนตาม fold
 
-root_logdir = '/media/tohn/SSD/ModelTrainByImages/R2_1/my_logs_block5_5FP_1FC_3'
+root_logdir = '/media/tohn/SSD/ModelTrainByImages/R1_5/mylogsB5_5FP_1FC_relu_3'  #เปลี่ยน R1_1 เปลี่ยนตาม fold
 def get_run_logdir():
     import time
     run_id = time.strftime("run_%Y_%m_%d_%H_%M_%S")
@@ -85,8 +107,7 @@ run_logdir = get_run_logdir()
 
 tensorboard_cb = callbacks.TensorBoard(log_dir = run_logdir)
 
-
-# os.makedirs("./models_6", exist_ok=True)
+# os.makedirs("./models", exist_ok=True)
 
 def avoid_error(gen):
     while True:
@@ -96,27 +117,10 @@ def avoid_error(gen):
         except:
             pass
 
-#Unfreez
-model.trainable = True
-set_trainable = False
-for layer in model.layers:
-    if layer.name == 'block5a_se_excite':
-        set_trainable = True
-    if set_trainable:
-        layer.trainable = True
-    else:
-        layer.trainable = False
-print('This is the number of trainable layers '
-      'after freezing the conv base:', len(model.trainable_weights))  
-
+ #Training
 model.compile(loss='categorical_crossentropy',
               optimizer=optimizers.RMSprop(lr=2e-5),
               metrics=['acc'])
-
-run_logdir = get_run_logdir()
-
-tensorboard_cb = callbacks.TensorBoard(run_logdir)
-#early_stop_cb = callbacks.EarlyStopping(monitor='val_acc', patience=66, mode= 'max')
 
 history = model.fit_generator(
       avoid_error(train_generator),
@@ -126,27 +130,4 @@ history = model.fit_generator(
       validation_steps= len(valframe) //batch_size,
       callbacks = [tensorboard_cb])
 
-model.save('./models/B5R2b5_5FP_1FC_fold1_3.h5')
-      
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
+model.save('./models/B5_R1_5FP_relu_1FC_fold5_3.h5') #เปลี่ยน fold >>> fold2
