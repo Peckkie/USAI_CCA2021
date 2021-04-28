@@ -21,13 +21,13 @@ ImageFile.LOAD_TRUNCATED_IMAGES = True
 batch_size = 16
 epochs = 200
 #Train
-dataframe = pd.read_csv('/home/yupaporn/codes/USAI/Traindf_fold1_3.csv')
-base_dir = '/media/tohn/SSD/Images/Image1'
+dataframe = pd.read_csv('/home/yupaporn/codes/USAI/Traindf_fold5_3.csv')
+base_dir = '/media/tohn/SSD/Images/Image5'
 os.chdir(base_dir)
 train_dir = os.path.join(base_dir, 'train')
 
 #validation
-valframe = pd.read_csv( '/home/yupaporn/codes/USAI/Validationdf_fold1_3.csv')
+valframe = pd.read_csv( '/home/yupaporn/codes/USAI/Validationdf_fold5_3.csv')
 validation_dir = os.path.join(base_dir, 'validation')
 
 #load model
@@ -36,7 +36,7 @@ import efficientnet.tfkeras
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.models import load_model
 
-model_dir = '/media/tohn/SSD/ModelTrainByImages/R1_1/models/B5_R1_5FP_relu_1FC_fold1_3.h5'
+model_dir = '/media/tohn/SSD/ModelTrainByImages/R1_5/models/B5_R1_5FP_relu_1FC_fold5_3.h5'
 model = load_model(model_dir)
 height = width = model.input_shape[1]
 
@@ -74,9 +74,9 @@ test_generator = test_datagen.flow_from_dataframe(
         color_mode= 'rgb',
         class_mode='categorical')
 
-os.chdir('/media/tohn/SSD/ModelTrainByImages/R2_1')
+os.chdir('/media/tohn/SSD/ModelTrainByImages/R2_5')
 
-root_logdir = '/media/tohn/SSD/ModelTrainByImages/R2_1/my_logs_block5_5FP_1FC_3' 
+root_logdir = '/media/tohn/SSD/ModelTrainByImages/R2_5/my_logs_block5_5FP_1FC_3' 
 def get_run_logdir():
     import time
     run_id = time.strftime("run_%Y_%m_%d_%H_%M_%S")
@@ -126,4 +126,4 @@ history = model.fit_generator(
       validation_steps= len(valframe) //batch_size,
       callbacks = [tensorboard_cb])
 
-model.save('./models/B5R2b5_5FP_1FC_fold1_3.h5')
+model.save('./models/B5R2b5_5FP_1FC_fold5_3.h5')
