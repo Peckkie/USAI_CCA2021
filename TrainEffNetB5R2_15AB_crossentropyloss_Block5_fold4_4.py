@@ -13,7 +13,7 @@ import os
 from tensorflow.keras import callbacks
 import pandas as pd
 
-os.environ["CUDA_VISIBLE_DEVICES"]="0"
+os.environ["CUDA_VISIBLE_DEVICES"]="1"
 
 from PIL import Image, ImageFile
 ImageFile.LOAD_TRUNCATED_IMAGES = True
@@ -21,13 +21,13 @@ ImageFile.LOAD_TRUNCATED_IMAGES = True
 batch_size = 16
 epochs = 200
 #Train
-dataframe = pd.read_csv('/home/yupaporn/codes/USAI/Traindf_fold8_3.csv')
-base_dir = '/media/tohn/SSD/Images/Image8'
+dataframe = pd.read_csv('/home/yupaporn/codes/USAI/Traindf_fold4_4.csv')
+base_dir = '/media/tohn/SSD/Images/Image4'
 os.chdir(base_dir)
 train_dir = os.path.join(base_dir, 'train')
 
 #validation
-valframe = pd.read_csv( '/home/yupaporn/codes/USAI/Validationdf_fold8_3.csv')
+valframe = pd.read_csv( '/home/yupaporn/codes/USAI/Validationdf_fold4_4.csv')
 validation_dir = os.path.join(base_dir, 'validation')
 
 #load model
@@ -36,7 +36,7 @@ import efficientnet.tfkeras
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.models import load_model
 
-model_dir = '/media/tohn/SSD/ModelTrainByImages/R1_8/models/B5_R1_5FP_relu_1FC_fold8_3.h5'
+model_dir = '/media/tohn/SSD/ModelTrainByImages/R1_4/models/B5_R1_15AB_relu_1FC_fold4_4.h5'
 model = load_model(model_dir)
 height = width = model.input_shape[1]
 
@@ -58,8 +58,8 @@ test_datagen = ImageDataGenerator(rescale=1./255)
 train_generator = train_datagen.flow_from_dataframe(
         dataframe = dataframe,
         directory = train_dir,
-        x_col = 'filename',
-        y_col = 'Views',
+        x_col = 'Path Crop',
+        y_col = 'Sub_class',
         target_size = (height, width),
         batch_size=batch_size,
         color_mode= 'rgb',
@@ -67,16 +67,16 @@ train_generator = train_datagen.flow_from_dataframe(
 test_generator = test_datagen.flow_from_dataframe(
         dataframe = valframe,
         directory = validation_dir,
-        x_col = 'filename',
-        y_col = 'Views',
+        x_col = 'Path Crop',
+        y_col = 'Sub_class',
         target_size = (height, width),
         batch_size=batch_size,
         color_mode= 'rgb',
         class_mode='categorical')
 
-os.chdir('/media/tohn/SSD/ModelTrainByImages/R2_8')
+os.chdir('/media/tohn/SSD/ModelTrainByImages/R2_4')
 
-root_logdir = '/media/tohn/SSD/ModelTrainByImages/R2_8/my_logs_block5_5FP_1FC_3' 
+root_logdir = '/media/tohn/SSD/ModelTrainByImages/R2_4/my_logs_block5_15AB_1FC_4'
 def get_run_logdir():
     import time
     run_id = time.strftime("run_%Y_%m_%d_%H_%M_%S")
@@ -126,4 +126,5 @@ history = model.fit_generator(
       validation_steps= len(valframe) //batch_size,
       callbacks = [tensorboard_cb])
 
-model.save('./models/B5R2b5_5FP_1FC_fold8_3.h5')
+model.save('./models/B5R2b5_15AB_1FC_fold4_4.h5')
+      
