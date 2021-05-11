@@ -25,12 +25,12 @@ import os
 from joblib import Parallel, delayed
 
   #choose gpu on processing 
-os.environ["CUDA_VISIBLE_DEVICES"]="0" # second gpu  
+os.environ["CUDA_VISIBLE_DEVICES"]="1" # second gpu  
 
-dataframe_train = pd.read_csv (r'/home/yupaporn/codes/USAI/Traindf_fold1.csv')
-dataframe_test = pd.read_csv (r'/home/yupaporn/codes/USAI/Validationdf_fold1.csv')
-train_dir = '/media/tohn/SSD/Images/Image1/train/'
-test_dir = '/media/tohn/SSD/Images/Image1/validation/'
+dataframe_train = pd.read_csv (r'/home/yupaporn/codes/USAI/Traindf_fold8.csv')
+dataframe_test = pd.read_csv (r'/home/yupaporn/codes/USAI/Validationdf_fold8.csv')
+train_dir = '/media/tohn/SSD/Images/Image8/train/'
+test_dir = '/media/tohn/SSD/Images/Image8/validation/'
 dataframe_train1HOT = pd.get_dummies(dataframe_train, columns=['Sub_class', 'Views'], prefix=['Sub_class', 'Views'])
 dataframe_test1HOT = pd.get_dummies(dataframe_test, columns=['Sub_class', 'Views'], prefix=['Sub_class', 'Views'])
 
@@ -41,7 +41,7 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.models import load_model
 EPOCHS = 100
 batch_size = 16
-model_dir = '/media/tohn/SSD/ModelTrainByImages/R1_1/models/B5R1_15AB_relu_1FC_fold1_1.h5'
+model_dir = '/media/tohn/SSD/ModelTrainByImages/R1_8/models/B5_R1_15AB_relu_1FC_fold8_1.h5'
 model = load_model(model_dir)
 height = width = model.input_shape[1]
 
@@ -179,8 +179,8 @@ def load_test_data():
 #tensorboard
 import datetime
 current_time = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
-train_log_dir = '/media/tohn/SSD/ModelTrainByImages/R2_1/mylogsnow_15AB_5FP_1FC_1/' + current_time + '/train'
-test_log_dir = '/media/tohn/SSD/ModelTrainByImages/R2_1/mylogsnow_15AB_5FP_1FC_1/' + current_time + '/test'
+train_log_dir = '/media/tohn/SSD/ModelTrainByImages/R2_8/mylogsnow_15AB_5FP_1FC_1/' + current_time + '/train'
+test_log_dir = '/media/tohn/SSD/ModelTrainByImages/R2_8/mylogsnow_15AB_5FP_1FC_1/' + current_time + '/test'
 train_summary_writer = tf.summary.create_file_writer(train_log_dir)
 test_summary_writer = tf.summary.create_file_writer(test_log_dir)
 
@@ -216,4 +216,4 @@ for epoch in range(EPOCHS):
 
 
 #save model   
-model2.save('/media/tohn/SSD/ModelTrainByImages/R2_1/models/MultiTask_EffNetB5_15AB_5FP_fold1_1.h5')
+model2.save('/media/tohn/SSD/ModelTrainByImages/R2_8/models/MultiTask_EffNetB5_15AB_5FP_fold8_1.h5')

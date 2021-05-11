@@ -13,7 +13,7 @@ import os
 from tensorflow.keras import callbacks
 import pandas as pd
 
-os.environ["CUDA_VISIBLE_DEVICES"]="0" #แก้
+os.environ["CUDA_VISIBLE_DEVICES"]="1" #แก้
 
 from PIL import Image, ImageFile
 ImageFile.LOAD_TRUNCATED_IMAGES = True
