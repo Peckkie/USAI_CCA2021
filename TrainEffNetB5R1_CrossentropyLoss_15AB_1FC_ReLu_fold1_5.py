@@ -24,12 +24,12 @@ batch_size = 16
 epochs = 200
 
 #Train
-dataframe = pd.read_csv('/home/jupyter/USAI002/Traindf_fold1_5.csv')
-base_dir = '/home/jupyter/USAI002/Images/Image1'
+dataframe = pd.read_csv('/home/jupyter/csvFile/GTraindf_fold2_5.csv')
+base_dir = '/home/jupyter/Images/Image1'
 os.chdir(base_dir)
 train_dir = os.path.join(base_dir, 'train')
 #validation
-valframe = pd.read_csv( '/home/jupyter/USAI002/Validationdf_fold1_5.csv')
+valframe = pd.read_csv( '/home/jupyter/csvFile/GValidationdf_fold1_5.csv')
 validation_dir = os.path.join(base_dir, 'validation')
 
 from efficientnet.keras import EfficientNetB5 as Net
