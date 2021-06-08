@@ -77,7 +77,7 @@ test_datagen = ImageDataGenerator(rescale=1./255)
 train_generator = train_datagen.flow_from_dataframe(
         dataframe = dataframe,
         directory = train_dir,
-        x_col = 'Path Crop',
+        x_col = 'PathG',
         y_col = 'Sub_class',
         target_size = (height, width),
         batch_size=batch_size,
@@ -86,7 +86,7 @@ train_generator = train_datagen.flow_from_dataframe(
 test_generator = test_datagen.flow_from_dataframe(
         dataframe = valframe,
         directory = validation_dir,
-        x_col = 'Path Crop',
+        x_col = 'PathG',
         y_col = 'Sub_class',
         target_size = (height, width),
         batch_size=batch_size,
