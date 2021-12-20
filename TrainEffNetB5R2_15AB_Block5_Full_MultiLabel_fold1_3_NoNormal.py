@@ -27,7 +27,7 @@ from PIL import Image, ImageFile
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 batch_size = 16
-EPOCHS = 400
+EPOCHS = 200
 
 #Train
 dataframe = pd.read_csv('/home/yupaporn/CSV_file/Traindf_fold1_3_NoNormal.csv')
@@ -152,7 +152,8 @@ test_accuracy = metrics.CategoricalAccuracy('test_accuracy_Class')
 
 
 optimizer=optimizers.RMSprop(lr=2e-3)
-loss_object = losses.CategoricalCrossentropy()
+# loss_object = losses.CategoricalCrossentropy()
+loss_object = losses.BinaryCrossentropy()
 # AbNorweight = 0.75
 
 
